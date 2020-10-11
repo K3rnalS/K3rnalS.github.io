@@ -20,7 +20,7 @@
             function checkLocDate() {
                 var x, y;
                 var locationA = "Darlington Nuclear Generating Station";
-                var dateA = "2020/06/21";
+                var dateA = "06/21/2020";
 
                 // Get the value of the input field with id="location"
                 x = document.getElementById("loc").value;
@@ -68,8 +68,8 @@
         </div>
         
         <div class="content">
-            <input id="loc" placeholder="Location Name" class="center-block">
-            <input id="date" placeholder="Year/Month/Date" class="center-block">
+            <input id="loc" placeholder="Location's NAME" class="center-block">
+            <input id="date" placeholder="Month/Day/Year" class="center-block">
             <button type="button" onClick="checkLocDate(); checkCode()" class="center-block">Submit</button>
             <input id="keycode" placeholder="Keycode" class="center-block" style="display: none">
             <p id="demo"></p>
