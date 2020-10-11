@@ -1,0 +1,396 @@
+// Starship Moon Lander Game //
+// Use the A and D keys to move left and right
+// Use the SpaceBar to fire the engines and increase height
+// The goal is land safely on the ground
+// Safe speeds are indicated by the numbers on the right not being red
+
+public int bgR = 0; // Red Colour variable to change background colour
+public int bgG = 0; // Green Colour variable to change background colour
+public int bgB = 0; // Blue Colour variable to change background colour
+public int timer = 0; // Int variable used for a timer to count each frame
+public int timerDelayCount = 0; // Int variable used for a timer delay based off of timer
+public int starOpacity = 255;
+
+public boolean gameOver = false; // Game Over variable to determine when to show and hide the gameover menu
+public boolean mouseHoverBox = false;
+public boolean shipMoveRight = false; // Boolean variable used to determine if the ship is being moved to the right by a player
+public boolean shipMoveLeft = false; // Boolean variable used to determine if the ship is being moved to the left by a player
+public boolean shipEngineFiring = false; // Boolean variable used to determine if the ship is being moved vertically by a player / trigger engine firing animation
+public boolean starShipLanded = false; // Boolean variable used to determine if the ship has landed
+public boolean starShipTooHigh = false; // Boolean variable used to determine if the ship is to high, vertically. Prevents the ship from going further
+
+public float starShipLocationY = 150; // Float variable used to store the ships Y location / as well as setting the ships height on gamestart
+public float starShipLocationX = random(50, 340); // Float variable used to store the ships X location / as well as randomly setting the ships horizontal position on gamestart
+public float starShipDistance = 0; // Float variable used to store the ships Y distance from the ground. Used to display smoke effect, as well as landing check
+public float dustOpacity = 0; // Float variable used to store the landing dust opacity
+public float verticalSpeed = 0; // Float variable used to store the ships Y speed.
+public float horizontalSpeed = random(-.15, .15);  // Float variable used to store the ships X speed. As well as randomly setting the X speed on gamestart
+public float gravityMS = 0.004; // Float variable used to store the gravity speed.
+public float thrustMS = 0.006; // Float variable used to store the ships thrust speed.
+public float horizontalMSR = 0.006; // Float variable used to store the increase horizontal movement speed to the right.
+public float horizontalLimitR = -.5; // Float variable used to store the max horizontal speed to the right.
+public float horizontalMSL = 0.006; // Float variable used to store the increase horizontal movement speed to the left.
+public float horizontalLimitL = -.5; // Float variable used to store the max horizontal speed to the left.
+
+void setup() {
+  frameRate(60); // 60 draw function calls every second
+  size(400, 400); // Draw window is 400 pixels by 400 pixels
+  rectMode(CORNERS); // Shape co-ordinates are based on corner location
+  noStroke(); // No shape outlines
+}
+
+void resetVariables() { // Reset variable function for multiple session playability
+  gameOver = false; // Reset gameover boolean
+  verticalSpeed = 0; // Reset vertical speed to 0
+  horizontalSpeed = random(-.15, .15); // Reset horizontal speed to a random number between -.15 to .15
+  starShipLocationX = random(50, 340); // Reset horizontal location to a random number between 50 to 380
+  starShipLocationY = 50; // Reset ship vertical location
+  starShipLanded = false; // Reset ship landed boolean
+  timerDelayCount = 0; // Reset timer delay
+  timer = 0; // Reset timer
+}
+ 
+void draw() { // Run this loop every frame (60 frames a second)
+  clear(); // Clear Screen
+  background(bgR, bgG, bgB); // Set background color
+  
+  if (gameOver == true) { // Pause game and show game over screen
+     drawGameOver(); // Call game over screen function
+  } else { // If the game isn't over, running game
+    timer++; // Each frame increase the timer, to count gameplay time
+    starOpacityLoop();
+    drawLandScapeBackground(); // Call background landscape function
+    drawLandScape(); // Call draw landable landscape function
+    starShipDistance(); // Call ship distance calculation from ground function
+    drawShipShadow(); // Call draw ship shadow function
+    drawShip(); // Call draw ship function
+    drawShipEnginesFiring(); // Call draw ship engine firing function
+    drawShipDust(); // Call draw ship dust function
+    checkShipLanded(); // Call check ship landed function
+    drawLandScapeForeground(); // Call draw foreground landscape function
+    shipGravity(); // Call ship gravity calculation and force function
+    shipMovementX(); // Call ship movement calculation and force function
+    drawInfo(); // Call draw information panel function
+    groundCollision(); // Call ship gravity calculation and force function
+  }
+}
+
+void starShipDistance() { // Calculation checking the distance of the ship from the ground
+  if (starShipLanded == false) { // Check if ship has landed on the ground, if its not
+    starShipDistance = starShipLocationY - 365; // Set the ships distance = the location of the ship minus 365 (co-ordinates Y of the ground)
+    starShipDistance = starShipDistance * -1; // Inverts the ships distance from the ground to get a positive number
+  }
+}
+
+void timerDelay() { // Called upon the ship landing
+  if (timerDelayCount == 0) { // If the current timer delay count is = 0, then we can set the current delay count
+    timerDelayCount = timer/60 + 2; // Sets the delay to 2 seconds after the current time/60 to show time in seconds
+  }
+}
+
+void groundCollision() { // Called when the ship is on the ground
+  if (starShipLanded) { // Checks if ship exploded or landed, if any are true
+    if (timer/60 == timerDelayCount) { // Checks if the current time in the timer is equal to the timer delay (2 second delay after landing)
+      drawGameOver(); // Run gameover function to display the gameover screen
+    }
+  }
+}
+
+void checkShipLanded() { // Called every frame to check if the ship has landed
+  if (starShipLocationY >= 365) { // Checks the ships location compared to the location of the ground and below (for in-accuracy)
+    starShipLanded = true; // Sets the ships boolean value to true. Stating it has landed
+    if (verticalSpeed >= 0.15) { // If the ships vertical speed is faster or equal to 0.15. The ship has crashed
+      drawExplosion(); // Call draw explosion function
+      timerDelay(); // Call timer delay function for explosion delay
+    } else if (horizontalSpeed >= 0.05 || horizontalSpeed <= -0.05){ // If the ships horizontal speed is faster or equal to .05. The ship has crashed
+      drawExplosion(); // Call draw explosion function
+      timerDelay(); // Call timer delay function for explosion delay
+    } else { // The ship landed safely
+      timerDelay(); // Call timer delay function for explosion delay
+    }
+  }
+}
+
+void drawShipShadow() { // Draws the ships shadow as it approaches the ground
+  if (starShipDistance <= 140) { // Checks that the ship is within 140 pixels of the ground
+    fill(0, 0, 0);  // Sets the shape colour to black
+    ellipse(163, 365, 28 - (starShipDistance/20), 7 - (starShipDistance/20)); // Draws the ships shadow, size based on ships distance to ground
+  }
+}
+
+void drawInfo() { // Draws the information panel box and values
+  fill(152, 155, 160);  // Sets the shape colour
+  rect(300, 25, 380, 200); // Creates a rectangle container
+  
+  textSize(10); // Sets the textsize
+  fill(0, 0, 0); // Sets the text colour
+  text(starShipDistance, 318, 40); // Prints text on screen, showing the Starships distance from the ground
+  text("Altitude(m)", 315, 60); // Prints text on screen, stating Altitude to provide context to the value above
+  
+  if (verticalSpeed >= 0.15) { // If the ships vertical speed is > 0.15
+    fill(214, 63, 40); // Set the text colour to red
+  } else { // If the ship is travelling slower then 0.15 vertically
+    fill(0, 0, 0); // Set the text colour to black
+  }
+  text(verticalSpeed, 325, 90); // Prints text on screen, showing the Starships vertical speed
+  text("Y Speed (m/s)", 307, 110); // Prints text on screen, stating the vertical speed to provide context to the value above
+  
+  if (horizontalSpeed >= 0.05 || horizontalSpeed <= -0.05) { // If the ships horizontal speed is > 0.05
+    fill(214, 63, 40); // Set the text colour to red
+  } else { // If the ship is travelling slower then 0.05 horizontally
+    fill(0, 0, 0); // Sets the text colour
+  }
+  text(horizontalSpeed, 325, 140); // Prints text on screen, showing the Starships horizontal speed
+  text("X Speed (m/s)", 307, 160); // Prints text on screen, stating the horizontal speed to provide context to the value above
+  
+  text(timer/60 + "s", 330, 190); // Prints text on screen, showing the current playtime this round, in seconds
+}
+
+void drawShip() { // Draw ship body function
+  drawShipEngines(); // Calls the draw ship engines function, since the engines are half inside the rocket
+  
+  //Body shapes with location and colour
+  fill(34, 38, 55); // set rocket ship body nose light colour
+  ellipse(163, starShipLocationY - 80, 26, 70); // draw rocket ship body nose, light section
+  fill(16, 19, 25); // set rocket ship body nose shadow colour
+  ellipse(166, starShipLocationY - 80, 21, 70); // draw rocket ship body nose, shadow section
+  fill(189, 193, 195); // set rocket ship body nose tip light colour
+  ellipse(164, starShipLocationY - 113, 8, 6); // draw rocket ship body nose tip, light section
+  fill(128, 132, 135); // set rocket ship body nose tip shadow colour
+  ellipse(166, starShipLocationY - 113, 6, 6); // draw rocket ship body nose tip, shadow section
+  fill(224, 225, 226); // set rocket ship body light colour
+  rect(150, starShipLocationY - 5, 176, starShipLocationY - 80); // draw rocket ship body, light section
+  fill(249, 249, 249); // set rocket ship body light reflection colour
+  rect(153, starShipLocationY - 5, 156, starShipLocationY - 80); // draw rocket ship body, light reflection section
+  fill(107, 114, 120); // set rocket ship body shadow colour
+  rect(157, starShipLocationY - 5, 176, starShipLocationY - 80);  // draw rocket ship body, shadow section
+  fill(130, 135, 141); // set rocket ship body shadow reflection colour
+  rect(163, starShipLocationY - 5, 168, starShipLocationY - 80);  // draw rocket ship body, shadow reflection section
+  drawShipDetail(); // Calls the draw ship detail function
+  drawShipLegs(); // Calls the draw ship legs function
+}
+
+void drawShipDetail() { // Draw ships detail function
+  // Rocket Ship landing engines locations and colour
+  fill(23, 27, 28); // set rocket ship vents colour
+  ellipse(160, starShipLocationY - 60, 5, 7); // set rocket ship vents location, left engine
+  ellipse(166, starShipLocationY - 60, 5, 7); // set rocket ship vents location, center engine
+  ellipse(172, starShipLocationY - 60, 5, 7); // set rocket ship vents location, right engine
+}
+
+void drawShipLegs() { // Draw ships leg function
+  // Rocket Ship Leg locations and colour
+  fill(224, 225, 226); // set rocket ship leg colour left
+  rect(151, starShipLocationY, 147, starShipLocationY - 12, 15, 0, 0, 0); // set rocket ship leg location, left section
+  fill(94, 101, 108); // set rocket ship leg colour shadow left
+  rect(153, starShipLocationY, 149, starShipLocationY - 12, 15, 0, 0, 0); // set rocket ship leg shadow location, left section
+  fill(107, 114, 120); // set rocket ship leg colour right
+  rect(171, starShipLocationY, 179, starShipLocationY - 12, 0, 15, 0, 0); // set rocket ship leg location, right section
+}
+
+void drawShipEngines() { // Draw ships engines function
+  // Rocket Ship Engine Locations and colour - Bottom of rocket
+  fill(74, 76, 79); // set rocket ships engine colour
+  triangle(167, starShipLocationY - 10, 165, starShipLocationY - 2, 169, starShipLocationY - 2); // set rocket ship right engine location
+  triangle(162, starShipLocationY - 10, 160, starShipLocationY - 2, 164, starShipLocationY - 2); // set rocket ship center engine location
+  triangle(157, starShipLocationY - 10, 159, starShipLocationY - 2, 155, starShipLocationY - 2); // set rocket ship left engine location
+}
+
+void drawShipEnginesFiring() { // Draw ships engines firing function
+  if (starShipLanded == false) { // Checks that the ship isn't landed
+    if (shipEngineFiring == true) { // Checks that the engines are being fired (space bar being pressed)
+      fill(251, 154, 0); // set rocket engine exhaust colour 
+      ellipse(160, starShipLocationY - 55, 4, 14); // set rocket ship engine exhaust location, left section
+      ellipse(166, starShipLocationY - 55, 4, 14); // set rocket ship engine exhaust location, center section
+      ellipse(172, starShipLocationY - 55, 4, 14); // set rocket ship engine exhaust location, right section
+    }
+  }
+}
+
+void drawShipDust() { // Draw ships dust effect function
+  dustOpacity = (starShipDistance * -4) + 220; // Sets dust's opacity to the starships distance * -4, to get a larger inverted number. Then add 220 for additonal height offset
+  if (dustOpacity >= 0) { // If the opacity set above, is greater then 0, then do the below
+    fill(214, 214, 214, dustOpacity); // sets the colour of the dust, along with the opacity being controlled by the variable set above
+    ellipse(133, 368, 18, 18); // set dust location
+    ellipse(143, 365, 28, 28); // set dust location
+    ellipse(153, 365, 28, 28); // set dust location
+    ellipse(163, 370, 20, 20); // set dust location
+    ellipse(173, 365, 28, 28); // set dust locationn
+    ellipse(183, 365, 26, 26); // set dust location
+    ellipse(193, 368, 18, 18); // set dust location
+  }
+}
+
+void drawLandScapeBackground() { // Draws the background landscape
+  // Landscape Creation Background
+  fill(117, 124, 130);  // sets the background landscapes colour
+  rect(-400 + (starShipLocationX/4), 325 + (starShipDistance/10), 400 + (starShipLocationX), 400); // Draw basic rectangle as the background. X and Y shifts with the ships location
+  ellipse(15 + (starShipLocationX/4), 330 + (starShipDistance/10), 80, 40); // Draw ellipse as the background hills. X and Y shifts with the ships location
+  ellipse(85 + (starShipLocationX/4), 333 + (starShipDistance/10), 80, 40); // Draw ellipse as the background hills. X and Y shifts with the ships location
+  ellipse(268 + (starShipLocationX/4), 333 + (starShipDistance/10), 100, 60); // Draw ellipse as the background hills. X and Y shifts with the ships location
+  ellipse(330 + (starShipLocationX/4), 333 + (starShipDistance/10), 80, 60); // Draw ellipse as the background hills. X and Y shifts with the ships location
+  ellipse(385 + (starShipLocationX/4), 333 + (starShipDistance/10), 60, 40); // Draw ellipse as the background hills. X and Y shifts with the ships location
+}
+
+void drawLandScape() { // Draws the landable landscape
+  // Landscape Creation Landing
+  fill(152, 155, 160); // sets colour of the landable landscape
+  rect(0, 350, 450, 400); // draws a basic rectangle, establishing the landing area
+}
+
+void drawLandScapeForeground() { // Draws the foreground landscape
+  // Landscape Creation Foreground
+  fill(69, 76, 82); // sets the colour of the foreground landscape 
+  rect(-800 + (starShipLocationX*2), 380 + (starShipDistance/10), 400 + (starShipLocationX), 400); // Draw basic rectangle as the foreground. X and Y shifts with the ships location
+  ellipse(-680 + (starShipLocationX*2), 385 + (starShipDistance/10), 120, 50); // Draw ellipse as the foreground hills. X and Y shifts with the ships location
+  ellipse(-420 + (starShipLocationX*2), 390 + (starShipDistance/10), 60, 50); // Draw ellipse as the foreground hills. X and Y shifts with the ships location
+  ellipse(-270 + (starShipLocationX*2), 380 + (starShipDistance/10), 80, 30); // Draw ellipse as the foreground hills. X and Y shifts with the ships location
+  ellipse(-15 + (starShipLocationX*2), 390 + (starShipDistance/10), 180, 60); // Draw ellipse as the foreground hills. X and Y shifts with the ships location
+  ellipse(355 + (starShipLocationX*2), 380 + (starShipDistance/10), 100, 40); // Draw ellipse as the foreground hills. X and Y shifts with the ships location
+}
+
+void drawExplosion() { // Draw explosion effect when collision occurs
+  fill(186, 6, 17, 88); // set shape colour
+  ellipse(162, starShipLocationY - 45, 300, 350); // draw explosion shape
+  fill(239, 124, 35, 139); // set shape colour
+  ellipse(162, starShipLocationY - 45, 200, 250); // draw explosion shape
+  fill(252, 238, 80, 197); // set shape colour
+  ellipse(162, starShipLocationY - 45, 100, 150); // draw explosion shape
+  fill(255, 255, 255); // set shape colour
+  ellipse(162, starShipLocationY - 45, 50, 100); // draw explosion shape
+}
+
+void shipGravity() { // Calculates the vertical movement on the ship from the engines or gravity
+  if (starShipLanded == false) { // Checks if the ship hasn't landed
+    if (shipEngineFiring == false) { // Checks that the engines are currently not firing 
+      gravityDistance(); // Calls gravity force calculation function
+    } else {
+      engineFiringDistance(); // Calls engine firing force calculation function
+    }
+    starShipLocationY = starShipLocationY + verticalSpeed; // Sets the ships Y location equal to itself plus vertical speed
+    if (starShipLocationY <= 25) { // Checks if the location of the ship is less or equal to 25 (height limit)
+      starShipTooHigh = true; // Ship is too high, sets boolean
+      shipEngineFiring = false; // Prevents the engine from firing by the user, preventing the height to increase further
+      starShipLocationY = 25; // Sets the ships location to 25.
+    } else {
+      starShipTooHigh = false; // The ship is below max limits, sets the ships TooHigh boolean to false
+    }
+  }
+}
+
+void engineFiringDistance() { // Engine Thrust force calculation
+  if (starShipTooHigh == false) { // Checks that the ship isn't too high
+    verticalSpeed = verticalSpeed - thrustMS; // Sets the vertical speed equal to itself, subtracted by the thrust force
+  }
+}
+
+void gravityDistance() { // Gravity pull force calculation
+  verticalSpeed = verticalSpeed + gravityMS; // Sets the vertical speed equal to itself, plus the gravity pull force
+}
+
+void shipMovementX() { // Horizontal Ship movement function
+  if (starShipLanded == false) { // Checks that the ship hasn't landed
+    if (shipMoveRight == true) { // If the input is set to move right
+      moveShipRight(); // Call moveShipRight function
+    }
+    if (shipMoveLeft == true) { // If the input is set to move left
+      moveShipLeft(); // Call moveShipLeft function
+    }
+    starShipLocationX = starShipLocationX + horizontalSpeed; // sets the X location of the ship equal to itself plus the horizontal speed change    
+    if (starShipLocationX <= 10) { // If the ship reaches the left most bounds of the map
+      starShipLocationX = 380; // Move ship to the right side of the map
+    }
+    if (starShipLocationX >= 390) { // If the ship reaches the right most bounds of the map
+      starShipLocationX = 20; // Move ship to the left side of the map
+    }
+  }
+}
+
+void moveShipLeft() { // Move ship to the left calulation
+  horizontalSpeed = horizontalSpeed + .003; // Horizontal speed is equal to itself plus 0.003
+}
+
+void moveShipRight() { // Move ship to the left calulation
+  horizontalSpeed = horizontalSpeed - .003; // Horizontal speed is equal to itself plus 0.003
+}
+
+void keyPressed() { // Function to check for input controls
+  if (key == 32 && starShipTooHigh == false) { // Spacebar - Fire Engines / Increase height
+    shipEngineFiring = true; // Engine is now firing, set boolean to true
+  }
+  if (key == 'd' || key == 'D') { // D key (Right) - Move Shrip Right
+    shipMoveRight = true; // Moving right, set boolean to true
+  }
+  if (key == 'a' || key == 'A') { // A key (left) - Move Shrip Left
+    shipMoveLeft = true; // Moving left, set boolean to true
+  }
+}
+
+void keyReleased() {
+  if (key == 32) { // Spacebar Released
+    shipEngineFiring = false; // Set engine firing to false
+  }
+  if (key == 'd' || key == 'D') { // D key (Right) - Move Shrip Right
+    shipMoveRight = false; // False right movement
+  }
+  if (key == 'a' || key == 'A') { // A key (left) - Move Shrip Left
+    shipMoveLeft = false; // False right movement
+  }
+}
+
+void drawGameOver() { // Draw game over screen
+  gameOver = true; // Set game over boolean to true, to prevent other code from running
+  
+  fill(255); // Set fill colour to white
+  textSize(16); // Set text size
+  text("Click 'Play Again'", 250, 25); // Create text saying Click play again, at top right
+  
+  fill(5, 217, 253); // Set fill colour
+  textSize(37); // Set text size
+  text("GAME OVER", width/2-100, height/2-20); // Create text saying Game Over
+  fill(5, 217, 253, 80); // Set fill colour 
+  textSize(39); // Set text size
+  text("GAME OVER", width/2-105, height/2-20); // Create slightly larger text then above, creating a shadow effect
+  
+  if (mouseX >= width/2-100 && mouseX <= width/2+100) { // Check if mouse X is hovered over Play again
+     if (mouseY <= height/2+30 && mouseY >= height/2-10) { // Check if mouse Y is hovered over Play again
+       mouseHoverBox = true; // Set mouse hover Play Again to true
+     }
+   } else {
+     mouseHoverBox = false;  // Set mouse hover to false when not over word
+   }
+  
+  if (mouseHoverBox == true) { // If mouseHover play again is true
+    fill(254, 97, 224, 150); // Set colour and opacity 
+    textSize(32); // Set font size
+    text("Play again?", width/2-75, height/2+20); // Create text saying Play again
+    fill(254, 97, 224, 80); // set colour and opacity
+    textSize(34); // Set font size
+    text("Play again?", width/2-80, height/2+20); // Create text saying Play again
+  } else { // If mouseHover is false
+    fill(254, 97, 224); // Set colour
+    textSize(32); // Set text size
+    text("Play again?", width/2-75, height/2+20); // Create text saying Play Again
+    fill(254, 97, 224, 80); // Set colour and opacity
+    textSize(34); // Set text size
+    text("Play again?", width/2-80, height/2+20); // Create text saying Play Again
+  }
+}
+
+void mouseClicked() { // Mouse click event
+  if (gameOver == true) { // Run if game is over
+   if (mouseX >= width/2-100 && mouseX <= width/2+100) { // Check if mouse X is hovered over Play again
+     if (mouseY >= height/2-10 && mouseY <= height/2+30) { // Check if mouse Y is hovered over Play again
+       resetVariables(); // Call reset variable function
+       mouseHoverBox = false; // Set the mouse hover box boolean to false
+     }
+   }
+  }
+}
+
+void starOpacityLoop() { // Looping star effect
+  for (int i = 0; i <= 15; i++) { // Run 15 times to create 15 different stars
+    fill (255); // Set shape colour to white
+    ellipse(random(width), random(height), 3, 3); // Create a circle with a random X and random Y location
+  }
+}

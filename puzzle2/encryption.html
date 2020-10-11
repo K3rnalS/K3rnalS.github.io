@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="description" content="ARG">
+        <!--Defining what the website is about-->
+        <meta name="keywords" content="HTML, CSS">
+        <meta name="author" content="Matthew Popowycz">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>It is approaching</title>
+        
+        <script defer src=https://Unpkg.com/processing-js></script>
+        
+        <!--External Style Sheet-->
+        <style>
+            body {
+                background-color: black;
+            }
+            #container {
+                width: 400px;
+                height: 400px;
+                margin-left: auto;
+                margin-right: auto;
+                margin-top: 30%;
+                color: white;
+                text-align: center;
+            }
+            
+            #container p a {
+                color: white;
+                text-decoration: none;
+            }
+
+            @keyframes fadeInAnimation {
+                0% {
+                    opacity: 0;
+                }
+                100% {
+                    opacity: 1;
+                }
+            }
+            
+            .clue {
+                animation: fadeInAnimation ease 5s;
+                animation-iteration-count: 1;
+                animation-fill-mode: forwards;
+            }
+        </style>
+        
+        <script>
+            function checkCode() {
+                var z;
+                var codeA = "Saivxnxddn Eerlvkg Gvxtrrdxnx Ciaksdn";
+                
+                //Get the value of the input field with the id="code"
+                z = document.getElementById("code").value;
+                
+                //If z is equal to code
+                if (z == codeA) {
+                    document.location.href="decryption.html";
+                }
+            }        
+        </script>
+    </head>
+    <body>
+        <div id="container">
+            <p class="clue">01010011 01100001 01101001 01110110 01111000 01101110 01111000 01100100 01100100 01101110 00100000 01000101 01100101 01110010 01101100 01110110 01101011 01100111 00100000 01000111 01110110 01111000 01110100 01110010 01110010 01100100 01111000 01101110 01111000 00100000 01000011 01101001 01100001 01101011 01110011 01100100 01101110</p>
+            
+            <input id="code" placeholder="Plain text." class="center-block">
+            <button type="button" onClick="checkCode()" class="center-block">Submit</button>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="description" content="ARG">
+        <!--Defining what the website is about-->
+        <meta name="keywords" content="HTML, CSS">
+        <meta name="author" content="Matthew Popowycz">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>It is approaching</title>
+        
+        <script defer src=https://Unpkg.com/processing-js></script>
+        
+        <!--External Style Sheet-->
+        <style>
+            body {
+                background-color: black;
+            }
+            #container {
+                width: 400px;
+                height: 400px;
+                margin-left: auto;
+                margin-right: auto;
+                margin-top: 30%;
+                color: white;
+                text-align: center;
+            }
+            @keyframes fadeInAnimation {
+                0% {
+                    opacity: 0;
+                }
+                100% {
+                    opacity: 1;
+                }
+            }
+            
+            .clue {
+                animation: fadeInAnimation ease 5s;
+                animation-iteration-count: 1;
+                animation-fill-mode: forwards;
+            }
+            
+            .bold {
+                font-weight: bold;
+            }
+            
+            .secret {
+                color: #0f0f0f;
+            }
+        </style>
+        
+        <script>
+            function checkCode() {
+                var z;
+                var codeA = "00110100001100110010000000110101001100100010011100110011001101010010111000110101001000100100111000100000001101110011100000100000001101000011011000100111001100000011011000101110001110010010001001010111";
+                
+                //Get the value of the input field with the id="code"
+                z = document.getElementById("code").value;
+                
+                //If z is equal to code
+                if (z == codeA) {
+                    document.location.href="00110100001100110010000000110101001100100010011100110011001101010010111000110101001000100100111000100000001101110011100000100000001101000011011000100111001100000011011000101110001110010010001001010111.html";
+                }
+            }        
+        </script>
+    </head>
+    <body>
+        <div id="container">
+            <h3 class="secret">The text to be converted, has been copied before</h3>
+            <p class="clue">One must convert<h3 style="bold" class="clue">HEX-</h3> such a string <h3 style="bold" class="clue">-A-</h3>of numbers to <h3 style="bold" class="clue">-DECIMAL</h3></p>
+            <input id="code" placeholder="1's and 0's" class="center-block">
+            <button type="button" onClick="checkCode()" class="center-block">Submit</button>
+        </div>
+    </body>
+</html>

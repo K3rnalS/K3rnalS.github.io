@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="description" content="ARG">
+        <!--Defining what the website is about-->
+        <meta name="keywords" content="HTML, CSS">
+        <meta name="author" content="Matthew Popowycz">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>It is approaching</title>
+        
+        <script defer src=https://Unpkg.com/processing-js></script>
+        
+        <!--External Style Sheet-->
+        <style>
+            body {
+                background-color: black;
+            }
+            #container {
+                width: 400px;
+                height: 400px;
+                margin-left: auto;
+                margin-right: auto;
+                margin-top: 30%;
+                color: white;
+                text-align: center;
+            }    
+            
+            #container p a {
+                color: white;
+                text-decoration: none;
+            }
+
+            @keyframes fadeInAnimation {
+                0% {
+                    opacity: 0;
+                }
+                100% {
+                    opacity: 1;
+                }
+            }
+            
+            .clue {
+                animation: fadeInAnimation ease 5s;
+                animation-iteration-count: 1;
+                animation-fill-mode: forwards;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <p class="clue">I take a right on Darlington Park Road</p>
+            <p class="clue">I take a left on Courtice Road</p>
+            <p class="clue">I take a right onto the service road, south of Highway of Heros, heading east</p>
+            <p class="clue">I take a right onto Holt Road, heading south</p>
+            <p class="clue">I enter the complex</p>
+            <p class="clue">As I pass by the water pool</p>
+            <p class="clue">I take a right onto <a href="keyword.html">####</a> road</p>
+            <p class="clue">This is where I park</p>
+        </div>
+    </body>
+</html>

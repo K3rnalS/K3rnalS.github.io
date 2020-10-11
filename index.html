@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="description" content="ARG">
+        <!--Defining what the website is about-->
+        <meta name="keywords" content="HTML, CSS">
+        <meta name="author" content="Matthew Popowycz">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>It is approaching</title>
+        
+        <!--External Style Sheet-->
+        <link rel="stylesheet" type="text/css" href="stylesheet.css">
+        
+        <!--Internal Style Sheet-->
+        <style>
+        </style>
+        
+        <script>            
+            function checkLocDate() {
+                var x, y;
+                var locationA = "Darlington Nuclear Generating Station";
+                var dateA = "2020/06/21";
+
+                // Get the value of the input field with id="location"
+                x = document.getElementById("loc").value;
+
+                // Get the value of the input field with id="date"
+                y = document.getElementById("date").value;
+                
+                // If x is equal to location name and y is equal to date
+                if (x == locationA && y == dateA) {
+                    document.getElementById('keycode').style.display = 'block';
+                }
+            }
+            
+            function checkCode() {
+                var z;
+                var codeA = "613907";
+                
+                //Get the value of the input field with the id="code"
+                z = document.getElementById("keycode").value;
+                
+                //If z is equal to code
+                if (z == codeA) {
+                    alert("Success");
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <div class="navigation">
+            <table>
+                <tr>
+                    <td>
+                        <a href="./puzzle1/puzzle1.html"><div class="puzzle1"></div></a>
+                    </td>
+                    <td>
+                        <a href="./puzzle2/puzzle2.html"><div class="puzzle2"></div></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="./puzzle3/puzzle3.html"><div class="puzzle3"></div></a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="content">
+            <input id="loc" placeholder="Location Name" class="center-block">
+            <input id="date" placeholder="Year/Month/Date" class="center-block">
+            <button type="button" onClick="checkLocDate(); checkCode()" class="center-block">Submit</button>
+            <input id="keycode" placeholder="Keycode" class="center-block" style="display: none">
+            <p id="demo"></p>
+        </div>
+    </body>
+</html>
