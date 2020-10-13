@@ -70,26 +70,44 @@
                 
                 // If x is equal to location name and y is equal to date
                 if (x == locationA && y == dateA) {
-                    document.getElementById('keycode').style.display = 'block';
+                    document.getElementById('redcode').style.display = 'block';
+                    document.getElementById('greencode').style.display = 'none';
+                    document.getElementById('bluecode').style.display = 'none';
                 }
             }
             
             function checkCode() {
-                var z;
-                var codeA = "613907";
+                var r, g, b;
+                var redCode = "114";
+                var greenCode = "137";
+                var blueCode = "218";
                 
                 //Get the value of the input field with the id="code"
-                z = document.getElementById("keycode").value;
+                r = document.getElementById("redcode").value;
+                g = document.getElementById("greencode").value;
+                b = document.getElementById("bluecode").value;
                 
                 //If z is equal to code
-                if (z == codeA) {
-                    counterDown();
-                    document.getElementById('overlay').style.opacity = '1';
-                    document.getElementById('keycode').style.display = 'none';
-                    document.getElementById('date').style.display = 'none';
-                    document.getElementById('loc').style.display = 'none';
-                    document.getElementById('submitBut').style.display = 'none';
-                    document.getElementsByClassName('navigation').style.display = 'none';
+                if (r == redCode) {
+                    document.getElementById('redcode').style.display = 'none';
+                    document.getElementById('greencode').style.display = 'block';
+                    document.getElementById('bluecode').style.display = 'none';         
+                    if (g == greenCode) {
+                        document.getElementById('redcode').style.display = 'none';
+                        document.getElementById('greencode').style.display = 'none';
+                        document.getElementById('bluecode').style.display = 'block';
+                        if (b == blueCode) {
+                            counterDown();
+                            document.getElementById('overlay').style.opacity = '1';
+                            document.getElementById('redcode').style.display = 'none';
+                            document.getElementById('greencode').style.display = 'none';
+                            document.getElementById('bluecode').style.display = 'none';
+                            document.getElementById('date').style.display = 'none';
+                            document.getElementById('loc').style.display = 'none';
+                            document.getElementById('submitBut').style.display = 'none';
+                            document.getElementsByClassName('navigation').style.display = 'none';
+                        }
+                    }
                 }
             }
             function counterDown() {
@@ -131,7 +149,9 @@
             <input id="loc" placeholder="Location's NAME" class="center-block">
             <input id="date" placeholder="Day/Month/Year" class="center-block">
             <button id="submitBut" type="button" onClick="checkLocDate(); checkCode()" class="center-block">Submit</button>
-            <input id="keycode" placeholder="Keycode" class="center-block" style="display: none">
+            <input id="redcode" placeholder="Red Code" class="center-block" style="display: none">
+            <input id="greencode" placeholder="Green Code" class="center-block" style="display: none">
+            <input id="bluecode" placeholder="Blue Code" class="center-block" style="display: none">
             <p id="demo"></p>
         </div>
     </body>
