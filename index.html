@@ -14,9 +14,49 @@
         
         <!--Internal Style Sheet-->
         <style>
+            #overlay {
+                background-color: black;
+                position: fixed;
+                padding: 0;
+                margin: 0;
+                
+                top: 0;
+                left: 0;
+                
+                width: 100%;
+                height: 100%;
+            }
+            #overlay p {
+                padding: 20px;
+            }
+            .loader {
+                border: 8px solid #7c7c7c;
+                border-radius: 50%;
+                border-top: 8px solid white;
+                width: 60px;
+                height: 60px;
+                margin-top: 300px;
+                margin-left: auto;
+                margin-right: auto;
+                -webkit-animation: spin 2s linear infinite; /* Safari */
+                animation: spin 2s linear infinite;
+            }
+            /* Safari */
+            @-webkit-keyframes spin {
+                0% { -webkit-transform: rotate(0deg); }
+                100% { -webkit-transform: rotate(360deg); }
+            }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }   
         </style>
         
-        <script>            
+        <script>
+            function loadFunction() {
+                document.getElementById('overlay').style.opacity = '0';
+            }
             function checkLocDate() {
                 var x, y;
                 var locationA = "Darlington Nuclear Generating Station";
@@ -43,12 +83,32 @@
                 
                 //If z is equal to code
                 if (z == codeA) {
-                    alert("Success");
+                    counterDown();
+                    document.getElementById('overlay').style.opacity = '1';
+                    document.getElementById('keycode').style.display = 'none';
+                    document.getElementById('date').style.display = 'none';
+                    document.getElementById('loc').style.display = 'none';
+                    document.getElementById('submitBut').style.display = 'none';
+                    document.getElementsByClassName('navigation').style.display = 'none';
                 }
+            }
+            function counterDown() {
+                var counter = 0;
+                var interval = setInterval(function() {
+                    counter++;
+                    if (counter == 5) {
+                        document.location.href="completed.html";
+                        clearInterval(interval);
+                    }
+                }, 1000);
             }
         </script>
     </head>
-    <body>
+    <body onload="loadFunction()">
+        <div id="overlay">
+            <p>Rebooting...</p>
+            <div class="loader"></div>
+        </div>
         <div class="navigation">
             <table>
                 <tr>
@@ -70,7 +130,7 @@
         <div class="content">
             <input id="loc" placeholder="Location's NAME" class="center-block">
             <input id="date" placeholder="Day/Month/Year" class="center-block">
-            <button type="button" onClick="checkLocDate(); checkCode()" class="center-block">Submit</button>
+            <button id="submitBut" type="button" onClick="checkLocDate(); checkCode()" class="center-block">Submit</button>
             <input id="keycode" placeholder="Keycode" class="center-block" style="display: none">
             <p id="demo"></p>
         </div>
