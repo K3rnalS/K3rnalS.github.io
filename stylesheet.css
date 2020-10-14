@@ -18,7 +18,7 @@ body {
 
 .navigation {
     width: 245px;
-    height: 290px;
+    height: 420px;
     margin-top: 139px;
     margin-right: auto;
     margin-left: auto;
@@ -56,13 +56,26 @@ body {
 }
 
 .puzzle3 {
-    width: 204%;
-    height: 100%;
+    margin-top: 22px;
+    width: 206%;
+    height: 88%;
     background-color: black;
     opacity: 0%;
     transition: opacity 1s linear;
 }
 .puzzle3:hover {
+    opacity: 30%;
+    transition: opacity 1s ease;
+}
+
+.puzzle4 {
+    width: 206%;
+    height: 102%;
+    background-color: black;
+    opacity: 0%;
+    transition: opacity 1s linear;
+}
+.puzzle4:hover {
     opacity: 30%;
     transition: opacity 1s ease;
 }
