@@ -97,28 +97,10 @@
                         document.getElementById('greencode').style.display = 'none';
                         document.getElementById('bluecode').style.display = 'block';
                         if (b == blueCode) {
-                            counterDown();
-                            document.getElementById('overlay').style.opacity = '1';
-                            document.getElementById('redcode').style.display = 'none';
-                            document.getElementById('greencode').style.display = 'none';
-                            document.getElementById('bluecode').style.display = 'none';
-                            document.getElementById('date').style.display = 'none';
-                            document.getElementById('loc').style.display = 'none';
-                            document.getElementById('submitBut').style.display = 'none';
-                            document.getElementsByClassName('navigation').style.display = 'none';
+                            document.location.href="/loading.html";
                         }
                     }
                 }
-            }
-            function counterDown() {
-                var counter = 0;
-                var interval = setInterval(function() {
-                    counter++;
-                    if (counter == 5) {
-                        document.location.href="completed.html";
-                        clearInterval(interval);
-                    }
-                }, 1000);
             }
         </script>
     </head>

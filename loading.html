@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="description" content="ARG">
+        <!--Defining what the website is about-->
+        <meta name="keywords" content="HTML, CSS">
+        <meta name="author" content="Matthew Popowycz">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>It is approaching</title>
+        
+        <!--External Style Sheet-->
+        <link rel="stylesheet" type="text/css" href="stylesheet.css">
+        
+        <!--Internal Style Sheet-->
+        <style>
+            #overlay {
+                background-color: black;
+                position: fixed;
+                padding: 0;
+                margin: 0;
+                
+                top: 0;
+                left: 0;
+                
+                width: 100%;
+                height: 100%;
+            }
+            #overlay p {
+                padding: 20px;
+            }
+            .loader {
+                border: 8px solid #7c7c7c;
+                border-radius: 50%;
+                border-top: 8px solid white;
+                width: 60px;
+                height: 60px;
+                margin-top: 300px;
+                margin-left: auto;
+                margin-right: auto;
+                -webkit-animation: spin 2s linear infinite; /* Safari */
+                animation: spin 2s linear infinite;
+            }
+            /* Safari */
+            @-webkit-keyframes spin {
+                0% { -webkit-transform: rotate(0deg); }
+                100% { -webkit-transform: rotate(360deg); }
+            }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }   
+        </style>
+        
+        <script>
+            function counterDown() {
+                var counter = 0;
+                var interval = setInterval(function() {
+                    counter++;
+                    if (counter == 5) {
+                        document.location.href="completed.html";
+                        clearInterval(interval);
+                    }
+                }, 1000);
+            }
+        </script>
+    </head>
+    <body onload="counterDown()">
+        <div id="overlay">
+            <p>Rebooting...</p>
+            <div class="loader"></div>
+        </div>
+    </body>
+</html>
